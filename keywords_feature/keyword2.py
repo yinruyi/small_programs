@@ -12,7 +12,7 @@ from sklearn import feature_extraction
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 import math
-from gensim import corpora, models, similarities
+
 import jieba.analyse
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -112,34 +112,15 @@ class preprocess(object):
                 count[i] =1
         return count
 
+def fix(words):
+	drop = ['...','&#']
+	result = []
+	for i in range(len(words)):
+		if words[i] not in drop:
+			result.append(words[i])
+	return result[0:20]
 
-class tfidf(preprocess):
-    def __init__(self):
-        pass
-    def tfidf(self, dataset, num):
-        stop_words_path = abspath+"//dataset//Stopword-Chinese.txt"
-        corpus = self.cutWords(dataset,stop_words_path)
-        vectorizer=CountVectorizer()#该类会将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
-        transformer=TfidfTransformer()#该类会统计每个词语的tf-idf权值
-        #print vectorizer.fit_transform(corpus)
-        try:
-            tfidf=transformer.fit_transform(vectorizer.fit_transform(corpus))
-            #第一个fit_transform是计算tf-idf，第二个fit_transform是将文本转为词频矩阵
-        except:
-            return []
-        #print tfidf
-        word=vectorizer.get_feature_names()#获取词袋模型中的所有词语
-        weight=tfidf.toarray()#将tf-idf矩阵抽取出来，元素a[i][j]表示j词在i类文本中的tf-idf权重
-        for i in xrange(len(weight[0])):
-            word[i] = (word[i],sum(weight[:,i])) 
-        # print word,len(word)
-        word = sorted(word,key=lambda word_tuple:word_tuple[1],reverse=1)[0:num]
-        word = [i[0]+' '+str(i[1]) for i in word]
-        result = []
-        for i in range(len(word)):
-            temp = word[i].split()
-            result.append(temp[0])
-        return result
+
 
 def tfidf_feature():
     bookId,bookContent = preprocess().transtxt(abspath+'//dataset//dataset.txt')
@@ -147,14 +128,45 @@ def tfidf_feature():
     # print tfidf
     result = []
     for i in range(len(bookId)):
-        temp = [bookId[i]]
-        temp.extend(tfidf().tfidf(bookContent[bookId[i]],10))
+    	temp = [bookId[i]]
+        s = ','.join(bookContent[bookId[i]])
+        words = jieba.analyse.extract_tags(s, topK=22, withWeight=False, allowPOS=())
+        words = fix(words)
+        temp.extend(words)
         result.append(temp)
-    preprocess().writeMatrix(result,'tfidf.txt')    
+        #break
+    preprocess().writeMatrix(result,'tfidf2.txt')    
+
+def textrank_feature():
+    bookId,bookContent = preprocess().transtxt(abspath+'//dataset//dataset.txt')
+    # tfidf = tfidf().tfidf(bookContent[bookId[1]],10)
+    # print tfidf
+    result = []
+    for i in range(len(bookId)):
+    	temp = [bookId[i]]
+        s = ','.join(bookContent[bookId[i]])
+        # print s
+        for x, w in jieba.analyse.textrank(s, withWeight=True):
+            # print('%s %s' % (x, w))
+            temp.append(x)
+
+        # print words
+        # temp.extend(words)
+        result.append(temp)
+        # break
+    preprocess().writeMatrix(result,'tfidf3.txt')    
+
 
 if __name__=='__main__':
     tfidf_feature()
 
+    # s = "此外，公司拟对全资子公司吉林欧亚置业有限公司增资4.3亿元，增资后，吉林欧亚置业注册资本由7000万元增加到5亿元。吉林欧亚置业主要经营范围为房地产开发及百货零售等业务。目前在建吉林欧亚城市商业综合体项目。2013年，实现营业收入0万元，实现净利润-139.13万元。"
+    # for x, w in jieba.analyse.extract_tags(s, withWeight=True):
+    #     print('%s %s' % (x, w))
 
+    # print('-'*40)
+    # print(' TextRank')
+    # print('-'*40)
 
-
+    # for x, w in jieba.analyse.textrank(s, withWeight=True):
+    #     print('%s %s' % (x, w))
