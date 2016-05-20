@@ -1,0 +1,1 @@
+g++ image-classification-predict.cpp -fPIC -shared -o image-classification-predict.so -I/usr/include/python2.7 -I/usr/local/include -L/usr/local/lib -lboost_python
