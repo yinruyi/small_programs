@@ -1,0 +1,28 @@
+clc;
+clear all;
+gridSpacing=16;
+run('E:\zlei_code\toolbox\vlfeat-0.9.18\toolbox\vl_setup')
+imagepath='E:\fengyangyang\youtube\shujuku';
+tezheng='E:\fengyangyang\youtube\hog';
+
+names = dir(imagepath);
+names = {names([names.isdir]).name};
+names = setdiff(names, {'.', '..'});
+for  i=1:numel(names)
+     tr=dir(fullfile(imagepath,[names{i}]));
+     tr = {tr.name};
+     tr = setdiff(tr, {'.', '..'});
+     for  j=1:length(tr)
+          im=imread(fullfile([imagepath '\' names{i}],tr{j}));
+          %if size(im,3)>1, im = rgb2gray(im) ; end
+          im = im2single(im);
+          %hog=vl_hog(im,gridSpacing,'verbose');
+          hog=vl_hog(im,gridSpacing);
+          image{j}=reshape(hog,numel(hog),1);
+          clear hog im
+      end
+      video_tz=cat(2,image{:});
+      opts.tezheng = fullfile(tezheng,[names{i}]);
+      save(opts.tezheng,'video_tz')
+      clear  video_tz image
+end

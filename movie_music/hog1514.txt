@@ -1,0 +1,15 @@
+%视频提取hog特征，也就是视频特征提取
+clear;
+video=VideoReader('D:\ffmpeg-0.5\234.mp4');%
+FrameRate = video.FrameRate
+video.NumberofFrames
+i=1;
+while i<video.NumberofFrames+1
+        im=read(video,i);
+        cellsize=16;
+        im=im2single(im);
+        run('D:\vlfeat\vlfeat-0.9.18\toolbox\vl_setup')
+        feature_1=vl_hog(im,cellsize);
+        feature(:,:,:,i)= feature_1;
+        i=i+1;
+end

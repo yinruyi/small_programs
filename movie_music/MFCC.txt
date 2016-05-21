@@ -1,0 +1,13 @@
+%mel coefficient
+clear;
+clc;
+close all;
+addpath('D:\voicebox');
+[S,FS,Nbits] = wavread('D:\ffmpeg-0.5\234.wav');
+subplot(2,1,1);
+hold on;
+plot(S);
+line([10000 10000],[0 1]);
+C=melcepst(S,FS,S/µãÊý);
+subplot(2,1,2);
+imagesc(C');

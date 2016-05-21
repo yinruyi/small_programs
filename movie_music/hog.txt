@@ -1,0 +1,8 @@
+video=VideoReader('222.mp4');
+video.NumberofFrames
+i=1;
+im=read(video,i);
+cellsize=16;
+im=im2single(im);
+run('D:\vlfeat\vlfeat-0.9.18\toolbox\vl_setup')
+feature=vl_hog(im,cellsize);
