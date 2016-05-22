@@ -1,0 +1,10 @@
+
+i = 1;
+video_feature_temp = video_feature(:,:,:,i);
+voice_feature_temp = voice_feature(i,:,:);
+%combine video feature temp
+temp = video_feature_temp(:,:,1);
+for j=2:31
+    temp = [temp;video_feature_temp(:,:,j)];
+end
+video_feature_temp = temp';%20*465result
