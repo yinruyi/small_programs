@@ -7,7 +7,7 @@ addpath('H:\dev\small_programs\movie_music\voicebox\voicebox');
 
 C=melcepst(S(1:1018,1),FS,12,20);
 for i=1:1514
-    voice_feature(i,:,:) = melcepst(S(1:1018,1),FS,12,20);
+    voice_feature(i,:,:) = melcepst(S(1018*(i-1)+1:1018*i,1),FS,12,20);
 end
     
     
